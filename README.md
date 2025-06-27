@@ -397,3 +397,18 @@ E o `.gitignore` na pasta `root`:
 ```shell
 venv/bin/activate
 ```
+
+É possível ignorar padrões de arquivos, por exemplo:
+
+```shell
+*.txt          -> Ignora todos os arquivos de extensão .txt
+```
+
+```shell
+*.txt
+!important.txt -> Ignora todos os arquivos de extensão .txt, menos esse
+```
+
+```shell
+/main.py       -> Ignora o arquivo main.py no diretório onde o .gitignore está localizado, mas não em outros subdiretórios
+```
