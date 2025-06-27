@@ -258,3 +258,142 @@ Uma vantagem do **merge** é que este preserva o verdadeiro histórico do projet
 
 O **Rebase** permite um histórico mais linear, o que pode ser preferível em alguns casos, mas isso vai de cultura para cultura dentro da empresa.
 
+## Reset
+Como o git, por ser um sistema de versionamento de código, consegue armazenar várias versões e commits, é possível retornar a versões anteriores deste e desfazer alterações se necessário. Isso se dá pelo comando:
+
+```shell
+git reset --soft COMMITHASH
+```
+
+O comando desfaz o último commit e, com o parâmetro `--soft`, retorna à um commit anterior sem perder as alterações do commit atual - Tais alterações não estarão *commitadas*. **É possível descobrir o hash do commit desejado pelo comando `git log`**.
+
+Caso não queira manter o estado atual do commit e deseje voltar completamente ao estado do commit anterior, perdendo as alterações atuais, utilizar o parâmetro `--hard`:
+
+```shell
+git reset --hard COMMITHASH
+```
+
+**OBS**: **CUIDADO!!!** Utilizar o parâmetro `--hard` faz com que você perca de forma irrecuperável as alterações presentes no commit atual.
+
+## Remote
+No git, um repositório superior é chamado de **remote** e, quando este é o principal, comumente é denominado `origin`. O comando para adicionar um remote no seu repositório local:
+
+```shell
+git remote add <name> <uri>
+```
+
+No parâmetro `name` você determina o nome do repositório - que comumente é `origin`, como explicitado anteriormente - e em `uri`, o caminho desse repositório - pode ser um repositório local, com o caminho do seu sistema ou, por exemplo, a url de um repositório do GitHub.
+
+Agora, para trazer o conteúdo desse repositório **remote** para o seu repositório **local**, primeiramente:
+
+```shell
+git fetch
+```
+
+Isso faz automaticamente o download das cópias de todos os conteúdos da pasta `.git/objects` do repoitório remote para o seu local. Apesar de termos todos os metadados do repositório remote, não significa que temos todos os arquivos.
+
+**OBS:** Também é possível fazer merge de branches locais com branches remotas. Para isso, rodar o seguinte comando no repositório local:
+
+```shell
+git merge remote/branch
+```
+
+Para trazer não só metadados e sim todos os arquivos de um repositório remoto, executar:
+
+```shell
+git pull [<remote>/<branch>]
+```
+
+Os parâmetros desse comando são opcionais. Caso eles não sejam passados, você vai trazer a sua branch atual do repositório remoto.
+
+**OBS**: O comando `git pull` cria um commit de merge, ou seja, pode ser definido de forma informal como a junção de `git fetch` e `git merge`.
+
+# GITHUB
+O **GitHub** é o site mais popular de gerenciamento de repositórios Git online. Em resumo, ele **hospeda repositórios remotos de forma centralizada em um website**.
+
+Além disso, também tem outras funcionalidades, como:
+
+- Servir como backup do seu código na nuvem;
+- Servir como um local central para compartilhar seu código / contribuir com códigos de outros;
+- Servir como um portfólio para seus projetos.
+
+É possível criar repositórios remotos pelo console / CLI do GitHub.
+
+Até o momento, apenas salvamos alterações no nosso repositório remoto via **commits**, porém, para subirmos essas alterações em um repositório remoto - no nosso caso, um hospedado no **GitHub** - é necessário executar o comando:
+
+```shell
+git push origin <localbranch>:<remotebranch>
+```
+
+Ou, na maioria dos casos:
+
+```shell
+git push origin main
+```
+
+Onde `origin` é a nomenclatura para o repositório remoto e `main` a branch principal deste.
+
+## Pull Requests
+Pull Requests são formas de propor mudanças no código, evitando assim que todos do time façam upload direto na `main`, por exemplo. Estes permitem que os membros de um time vejam quais mudanças estão sendo propostas e discutam quais passarão para produção ou não.
+
+![alt text](image-3.png)
+
+É possível analizar e criar Pull Requests na aba como demonstrado acima.
+
+## .gitignore
+É comum você não querer que o git suba determinados arquivos / diretórios para seu repositório por conta de diversos motivos, entre os principais:
+
+- .env -> contém informações sensíveis como chaves privadas, etc;
+- Dependências -> pycache, node_modules, etc. Tais pastas contém as dependências / bibliotecas da sua aplicação e, por conta disto, costumam pesar muito.
+
+Exemplo de um arquivo `.gitignore`:
+
+```shell
+node_modules 
+```
+
+Isso vai ignorar todo diretório / arquivo de nome `node_modules`, ou seja, ignora:
+
+```
+node_modules/code.js
+src/node_modules/code.js
+src/node_modules
+```
+
+Não ignora:
+
+```
+src/node_modules_2/code.js
+env/node_modules_3
+```
+
+É comum também ter diversos `.gitignore` aninhados em um projeto. Cada `.gitignore` se aplica somente ao diretório que está inserido.
+
+Digamos que você tenha a seguinte árvore de projeto:
+
+```
+src/
+├── assets/
+│   ├── .gitignore
+|   ├── cover_art.jpg
+│   └── onlydevs.png
+├── main.py
+├── tests.py
+├── venv/
+│   └── bin/
+|       ├── activate
+│       └── python
+.gitignore
+```
+
+Nesse caso, o `.gitignore` dentro da pasta `assets` conterá:
+
+```shell
+onlydevs.png
+```
+
+E o `.gitignore` na pasta `root`:
+
+```shell
+venv/bin/activate
+```
